@@ -1,0 +1,172 @@
+<template>
+	<div>
+		<table
+			aria-multiselectable="true"
+			class="
+				slds-table
+				slds-table_bordered
+				slds-table_edit
+				slds-table_fixed-layout
+				slds-table_resizable-cols
+				slds-tree
+				slds-table_tree slds-table_header-hidden
+			"
+			role="treegrid"
+		>
+			<thead>
+				<tr class="slds-line-height_reset">
+					<th class="slds-text-align_right" scope="col" style="width: 3.25rem">
+						<div class="slds-th__action slds-th__action_form">
+							<lightning-input
+								data-id="Select All"
+								type="checkbox"
+								checked={selectAllCheckbox}
+								onchange={handleSelectAll}
+							></lightning-input>
+						</div>
+					</th>
+					<template for:each={columns} for:item="col">
+						<th
+							key={col.fieldName}
+							aria-label={col.label}
+							aria-sort="none"
+							class="slds-has-button-menu slds-is-resizable slds-is-sortable"
+							scope="col"
+						>
+							<div
+								class="
+									slds-grid slds-grid_vertical-align-center
+									slds-has-flexi-truncate
+								"
+							>
+								<span class="slds-truncate slds-th__action" title="Account Name"
+									>{col.label}</span
+								>
+							</div>
+							<div class="slds-resizable">
+								<input
+									type="range"
+									aria-label={col.columnWidth}
+									class="slds-resizable__input slds-assistive-text"
+									id={col.columnWidthId}
+									max="1000"
+									min="20"
+									tabindex="-1"
+								/>
+								<span class="slds-resizable__handle">
+									<span class="slds-resizable__divider"></span>
+								</span>
+							</div>
+						</th>
+					</template>
+				</tr>
+			</thead>
+			<tbody>
+				<template for:each={gridData} for:item="data">
+					<tr
+						key={data.id}
+						data-id={data.id}
+						aria-expanded={data.ariaExpanded}
+						aria-level={data.ariaLevel}
+						aria-posinset={data.ariaPosinset}
+						aria-selected={data.ariaSelected}
+						aria-setsize={data.ariaSetsize}
+						class={data.rowClass}
+						tabindex="0"
+					>
+						<td class="slds-text-align_right" role="gridcell" style="width: 3.25rem">
+							<lightning-input
+								data-record-id={data.id}
+								data-id={data.id}
+								type="checkbox"
+								checked={data.ariaSelected}
+								disabled={data.disableCheckbox}
+								onchange={handleExpenseSelect}
+							></lightning-input>
+						</td>
+						<th class="slds-tree__item" data-label="Expense Number" scope="row">
+							<lightning-button-icon
+								data-record-id={data.id}
+								class="slds-m-right_x-small"
+								aria-hidden="false"
+								icon-name="utility:chevronright"
+								variant="bare"
+								small="x-small"
+								alternative-text={data.checkBoxText}
+								onclick={handleExpandCollapse}
+							></lightning-button-icon>
+							<div class="slds-truncate" title={data.expenseNumber}>
+								<a href="#" tabindex="-1">{data.expenseNumber}</a>
+							</div>
+						</th>
+						<td data-label="fileName" role="gridcell"></td>
+						<td data-label="fileSize" role="gridcell"></td>
+						<td data-label="contentType" role="gridcell"></td>
+						<td data-label="fileDescription" role="gridcell"></td>
+					</tr>
+					<template if:true={data.ariaExpanded}>
+						<template if:true={data._children}>
+							<template for:each={data._children} for:item="child">
+								<tr
+									key={child.id}
+									data-id={child.id}
+									aria-level={child.ariaLevel}
+									aria-posinset={child.ariaPosinset}
+									aria-selected={child.ariaSelected}
+									aria-setsize={child.ariaSetsize}
+									class={child.rowClass}
+									tabindex="0"
+								>
+									<td
+										class="slds-text-align_right"
+										role="gridcell"
+										style="width: 3.25rem"
+									>
+										<lightning-input
+											data-record-id={child.id}
+											data-id={child.id}
+											type="checkbox"
+											checked={child.ariaSelected}
+											disabled={child.disableCheckbox}
+											onchange={handleAttachmentSelect}
+										></lightning-input>
+									</td>
+									<td></td>
+									<td data-label="fileName" role="gridcell">
+										<div class="slds-truncate" title={child.attachmentName}>
+											{child.attachmentName}
+										</div>
+									</td>
+									<td data-label="fileSize" role="gridcell">
+										<div class="slds-truncate" title={child.fileSize}>
+											{child.fileSize}
+										</div>
+									</td>
+									<td data-label="contentType" role="gridcell">
+										<div class="slds-truncate" title={child.contentType}>
+											{child.contentType}
+										</div>
+									</td>
+									<td data-label="fileDescription" role="gridcell">
+										<div class="slds-truncate" title={child.description}>
+											{child.description}
+										</div>
+									</td>
+								</tr>
+							</template>
+						</template>
+						<template if:false={data._children}>
+							<tr key={data.id}>
+								<td colspan="6" class="slds-p-around_none">
+									<div class="slds-p-around_x-small slds-m-left_large">
+										<p class="slds-p-left_xx-large">No Data available</p>
+									</div>
+								</td>
+							</tr>
+						</template>
+					</template>
+				</template>
+			</tbody>
+		</table>
+	</div>
+</template>
